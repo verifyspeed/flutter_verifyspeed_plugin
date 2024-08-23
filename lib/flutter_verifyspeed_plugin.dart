@@ -1,3 +1,3 @@
-library verify_speed;
+library flutter_verifyspeed_plugin;
 
 export 'src/src.dart';
