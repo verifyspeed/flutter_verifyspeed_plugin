@@ -3,6 +3,7 @@ description: Verifyspeed plugin for Flutter.
 version: 0.0.1
 homepage: https://github.com/verifyspeed/flutter_verifyspeed_plugin
 repository: https://github.com/verifyspeed/flutter_verifyspeed_plugin
+issue_tracker: https://github.com/verifyspeed/flutter_verifyspeed_plugin/issues
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
