@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_verifyspeed_plugin/verifyspeed.dart';
+import 'package:flutter_verifyspeed_plugin/flutter_verifyspeed_plugin.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

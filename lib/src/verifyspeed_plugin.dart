@@ -1,5 +1,5 @@
 import 'package:flutter/services.dart';
-import 'package:flutter_verifyspeed_plugin/verifyspeed.dart';
+import 'package:flutter_verifyspeed_plugin/flutter_verifyspeed_plugin.dart';
 
 final class VerifySpeedPlugin {
   VerifySpeedPlugin._();

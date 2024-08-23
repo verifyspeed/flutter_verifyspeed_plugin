@@ -9,8 +9,6 @@
 .history
 .svn/
 migrate_working_dir/
-android/verifyspeed_aar
-example/android/verifyspeed_aar
 
 # IntelliJ related
 *.iml
