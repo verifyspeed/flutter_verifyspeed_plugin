@@ -1,0 +1,77 @@
+group = "co.verifyspeed.flutter_verifyspeed_plugin"
+version = "1.0-SNAPSHOT"
+
+buildscript {
+    ext {
+        agp_version = '7.3.0'
+    }
+    ext.kotlin_version = "1.7.10"
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath("com.android.tools.build:gradle:$agp_version")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+    }
+}
+
+apply plugin: "com.android.library"
+apply plugin: "kotlin-android"
+
+android {
+    if (project.android.hasProperty("namespace")) {
+        namespace = "co.verifyspeed.flutter_verifyspeed_plugin"
+    }
+
+    compileSdk = 34
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
+    sourceSets {
+        main.java.srcDirs += "src/main/kotlin"
+        test.java.srcDirs += "src/test/kotlin"
+    }
+
+    defaultConfig {
+        minSdk = 21
+    }
+
+    buildFeatures {
+        buildConfig = true
+    }
+
+   dependencies {
+         api 'com.github.verifyspeed:VerifySpeed_Android_SDK:1.0.9'
+         testImplementation("org.jetbrains.kotlin:kotlin-test")
+         testImplementation("org.mockito:mockito-core:5.2.0")
+    }
+
+     testOptions {
+         unitTests.all {
+             useJUnitPlatform()
+
+             testLogging {
+                events "passed", "skipped", "failed", "standardOut", "standardError"
+                outputs.upToDateWhen {false}
+                showStandardStreams = true
+             }
+         }
+     }
+}
