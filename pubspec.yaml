@@ -40,12 +40,12 @@ flutter:
       ios:
         pluginClass: FlutterVerifyspeedPlugin
         podspec: ios/flutter_verifyspeed_plugin.podspec
-      linux:
-        pluginClass: FlutterVerifyspeedPlugin
-      macos:
-        pluginClass: FlutterVerifyspeedPlugin
-      windows:
-        pluginClass: FlutterVerifyspeedPluginCApi
+      # linux:
+      #   pluginClass: FlutterVerifyspeedPlugin
+      # macos:
+      #   pluginClass: FlutterVerifyspeedPlugin
+      # windows:
+      #   pluginClass: FlutterVerifyspeedPluginCApi
 
   # To add assets to your plugin package, add an assets section, like this:
   # assets:
