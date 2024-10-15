@@ -21,5 +21,5 @@ A new Flutter plugin project by VerifySpeed.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
   s.swift_version = '5.0'
 
-  s.dependency 'VerifySpeed_IOS_SDK', '~> 1.0.4'
+  s.dependency 'VerifySpeed_IOS_SDK', '~> 1.0.7'
 end
