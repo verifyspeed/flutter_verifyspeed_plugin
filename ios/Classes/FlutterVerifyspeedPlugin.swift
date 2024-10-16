@@ -36,11 +36,15 @@ public class FlutterVerifyspeedPlugin: NSObject, FlutterPlugin {
             }
             
             VerifySpeed.shared.setClientKey(clientKey)
-            VerifySpeed.shared.startVerification(
-                callBackListener: listener,
-                methodType: type,
-                redirectToStore: redirectToStore
-            )
+            do {
+                try VerifySpeed.shared.startVerification(
+                    callBackListener: listener,
+                    verifySpeedMethodType: type,
+                    redirectToStore: redirectToStore
+                )
+            } catch {
+                result(["error" : "Something went wrong", "errorType" : "Unknown"])
+            }
             
         case "startVerificationWithDeepLink":
             let deepLink = arguments?["deepLink"] as! String
