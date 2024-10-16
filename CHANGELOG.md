@@ -13,3 +13,7 @@
 ## 0.0.4
 
 - Improvement and bug fixes
+
+## 0.0.5
+
+- Improvement and bug fixes
