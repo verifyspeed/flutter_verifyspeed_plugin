@@ -17,3 +17,7 @@
 ## 0.0.5
 
 - Improvement and bug fixes
+
+## 0.0.6
+
+- Improvement and bug fixes
