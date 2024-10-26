@@ -29,3 +29,8 @@
 ## 0.0.8
 
 - Improvement and bug fixes
+
+## 0.0.9
+
+- Breaking change: verify phone number process is changed
+- Improvement and bug fixes
