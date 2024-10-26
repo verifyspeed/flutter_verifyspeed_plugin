@@ -31,122 +31,129 @@ class FlutterVerifyspeedPlugin: FlutterPlugin, MethodCallHandler, ActivityAware{
   @OptIn(DelicateCoroutinesApi::class)
   override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
     val arguments = call.arguments as HashMap<*, *>?
+    if (activity == null) {
+      result.success(mapOf("error" to "Activity not found", "errorType" to VerifySpeedErrorType .ActivityNotSet))
+
+      return
+    }
 
     when (call.method) {
-      "startVerification" -> {
-        val clientKey: String = arguments!!["clientKey"] as String
-        VerifySpeed.init(activity!!)
-        VerifySpeed.setClientKey(clientKey)
+      "verifyPhoneNumberWithDeepLink" -> {
+        handleException({
+          val deepLink = arguments!!["deepLink"] as String
+          val verificationKey = arguments["verificationKey"] as String
+          val redirectToStore = arguments["redirectToStore"] as? Boolean ?: true
 
-        val redirectToStore: Boolean? = arguments["redirectToStore"] as Boolean?
-        val type: VerifySpeedMethodType = if (arguments["type"] as String == "telegram-message") {
-          VerifySpeedMethodType.Telegram
-        } else if (arguments["type"] as String == "whatsapp-message") {
-          VerifySpeedMethodType.WhatsApp
-        } else {
-          throw VerifySpeedError(
-            message = "Invalid type",
-            type = VerifySpeedErrorType.NotFoundVerificationMethod,
+          VerifySpeed.init(activity!!)
+
+          VerifySpeed.verifyPhoneNumberWithDeepLink(
+            deeplink = deepLink,
+            verificationKey = verificationKey,
+            redirectToStore = redirectToStore,
+            callBackListener = getVerificationListener(result),
           )
-        }
-
-        GlobalScope.launch {
-          VerifySpeed.startVerification(
-            callBackListener = object : VerifySpeedListener {
-              override fun onSuccess(token: String) {
-                result.success(mapOf("token" to token))
-              }
-
-              override fun onFail(error: VerifySpeedError) {
-                result.success(
-                  mapOf(
-                    "error" to error.message,
-                    "errorType" to error.type.name,
-                  )
-                )
-              }
-            },
-            type,
-            redirectToStore = redirectToStore ?: true,
-          )
-        }
+        },
+          result
+        )
       }
 
-      "startVerificationWithDeepLink" -> {
-        val deepLink: String = arguments!!["deepLink"] as String
-        val verificationName: String = arguments["verificationName"] as String
-        val verificationKey: String = arguments["verificationKey"] as String
-        val redirectToStore: Boolean? = arguments["redirectToStore"] as Boolean?
-        VerifySpeed.init(activity!!)
+      "verifyPhoneNumberWithOtp" -> {
+        handleException(
+          {
+            val verificationKey = arguments!!["verificationKey"] as String
+            val phoneNumber = arguments["phoneNumber"] as String
 
-        VerifySpeed.startVerificationWithDeeplink(
-          callBackListener = object : VerifySpeedListener {
-            override fun onSuccess(token: String) {
-              result.success(mapOf("token" to token))
-            }
-
-            override fun onFail(error: VerifySpeedError) {
-              result.success(
-                mapOf(
-                  "error" to error.message,
-                  "errorType" to error.type.name,
-                )
+            GlobalScope.launch {
+              VerifySpeed.verifyPhoneNumberWithOtp(
+                phoneNumber = phoneNumber,
+                verificationKey = verificationKey,
               )
+
+              result.success(null)
             }
           },
-          verificationKey = verificationKey,
-          deepLink = deepLink,
-          methodName = verificationName,
-          redirectToStore = redirectToStore ?: true,
+          result
         )
       }
 
       "notifyOnResumed" -> {
-        GlobalScope.launch {
-          VerifySpeed.notifyOnResumed()
-        }
+        handleException(
+          {
+            GlobalScope.launch {
+              VerifySpeed.notifyOnResumed()
+            }
+          },
+          result
+        )
+      }
+
+      "validateOtp" -> {
+        handleException(
+          {
+            val verificationKey: String = arguments!!["verificationKey"] as String
+            val otpCode: String = arguments["otpCode"] as String
+
+            VerifySpeed.init(activity!!)
+
+            GlobalScope.launch {
+              VerifySpeed.validateOTP(
+                callBackListener = getVerificationListener(result),
+                verificationKey = verificationKey,
+                otpCode = otpCode,
+              )
+            }
+          },
+          result,
+        )
       }
 
       "getUiFromApi" -> {
-        val clientKey: String = arguments!!["clientKey"] as String
-        VerifySpeed.setClientKey(clientKey)
+        handleException({
+          val clientKey = arguments!!["clientKey"] as String
 
-        GlobalScope.launch {
-          try {
+          VerifySpeed.setClientKey(clientKey)
+
+          GlobalScope.launch {
             val response = VerifySpeed.getUiFromApi()
+
             result.success(response)
-          } catch (error : VerifySpeedError){
-            result.error(
-              error.type.name,
-              error.message,
-              error.stackTrace.toString()
-            )
           }
-        }
+        }, result)
       }
 
       "checkInterruptedSession" -> {
-        GlobalScope.launch {
-          VerifySpeed.init(activity!!)
+        handleException({
+          GlobalScope.launch {
+            VerifySpeed.init(activity!!)
 
-          VerifySpeed.checkInterruptedSession(
-            callBackListener = object : VerifySpeedListener {
-              override fun onSuccess(token: String) {
-                result.success(mapOf("token" to token))
-              }
-
-              override fun onFail(error: VerifySpeedError) {
-                result.success(
-                  mapOf(
-                    "error" to error.message,
-                    "errorType" to error.type.name,
-                  )
-                )
-              }
-            },
-          )
-        }
+            VerifySpeed.checkInterruptedSession(
+              callBackListener = getVerificationListener(result),
+            )
+          }
+        }, result)
       }
+    }
+  }
+
+  private fun getVerificationListener(result: MethodChannel.Result): VerifySpeedListener {
+    return object : VerifySpeedListener {
+      override fun onSuccess(token: String) {
+        result.success(mapOf("token" to token))
+      }
+
+      override fun onFail(error: VerifySpeedError) {
+        result.success(mapOf("error" to error.message, "errorType" to error.type.name))
+      }
+    }
+  }
+
+  private fun handleException(func: () -> Unit, result: MethodChannel.Result) {
+    try {
+      func()
+    } catch (e: VerifySpeedError) {
+      result.success(mapOf("error" to e.message, "errorType" to e.type.name))
+    } catch (e: Exception) {
+      result.success(mapOf("error" to e.message, "errorType" to "Unknown"))
     }
   }
 

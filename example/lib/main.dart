@@ -1,13 +1,9 @@
-import 'dart:async';
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_verifyspeed_plugin/flutter_verifyspeed_plugin.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  VerifySpeedPlugin.instance.setClientKey('YOUR_CLIENT_KEY');
   runApp(const MyApp());
 }
 
@@ -55,23 +51,6 @@ class LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
     }
   }
 
-  Future<void> startVerification(
-    VerifySpeedMethodType type,
-  ) =>
-      VerifySpeedPlugin.instance
-          .startVerification(
-            onFailure: (error) {
-              log('Error: ${error.message}');
-            },
-            onSuccess: (token) {
-              log('Token: $token');
-            },
-            type: type,
-          )
-          .catchError(
-            (error, stackTrace) => log('Error on init: $error'),
-          );
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,15 +62,11 @@ class LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton(
-              onPressed: () => startVerification(
-                VerifySpeedMethodType.telegram,
-              ),
+              onPressed: () {},
               child: const Text('Start Verification With Telegram'),
             ),
             ElevatedButton(
-              onPressed: () => startVerification(
-                VerifySpeedMethodType.whatsapp,
-              ),
+              onPressed: () {},
               child: const Text('Start Verification With WhatsApp'),
             ),
           ],

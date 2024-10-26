@@ -1,6 +1,7 @@
 enum VerifySpeedMethodType {
   telegram('telegram-message'),
-  whatsapp('whatsapp-message');
+  whatsapp('whatsapp-message'),
+  smsOtp('sms-otp');
 
   const VerifySpeedMethodType(this.value);
 

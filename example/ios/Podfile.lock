@@ -2,10 +2,10 @@ PODS:
   - Flutter (1.0.0)
   - flutter_verifyspeed_plugin (1.0.0):
     - Flutter
-    - VerifySpeed_IOS_SDK (~> 1.0.10)
+    - VerifySpeed_IOS_SDK (~> 1.0.11)
   - integration_test (0.0.1):
     - Flutter
-  - VerifySpeed_IOS_SDK (1.0.10)
+  - VerifySpeed_IOS_SDK (1.0.11)
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
@@ -26,9 +26,9 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  flutter_verifyspeed_plugin: 77e5772f687585476e0c79f20fb678d64a8a3e28
+  flutter_verifyspeed_plugin: 10fad4bd40ad7d3e3d4a4fa5e3aecacdc8cfeada
   integration_test: 252f60fa39af5e17c3aa9899d35d908a0721b573
-  VerifySpeed_IOS_SDK: 6773bd50df42a760fc8c9b8196e1a5d1bccb2f7f
+  VerifySpeed_IOS_SDK: 11773960e7695c602bd3da099a6f7a4354ae279c
 
 PODFILE CHECKSUM: 7be2f5f74864d463a8ad433546ed1de7e0f29aef
 

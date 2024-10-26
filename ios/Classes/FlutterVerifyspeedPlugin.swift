@@ -17,54 +17,49 @@ public class FlutterVerifyspeedPlugin: NSObject, FlutterPlugin {
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         let arguments = call.arguments as? [String: Any]
-        let redirectToStore = arguments?["redirectToStore"] as? Bool ?? true
         
         switch call.method {
-        case "startVerification":
-            let clientKey = arguments?["clientKey"] as! String
-            let typeString = arguments?["type"] as! String
-            let type: VerifySpeedMethodType
+          case "verifyPhoneNumberWithDeepLink":
+            let deeplink = arguments?["deepLink"] as! String
+            let verificationKey = arguments?["verificationKey"] as! String
+            let redirectToStore = arguments?["redirectToStore"] as? Bool ?? true
+
             let listener = VerifySpeedListenerHandler(result: result)
 
-            if typeString == "telegram-message" {
-                type = .Telegram
-            } else if typeString == "whatsapp-message" {
-                type = .WhatsApp
-            } else {
-                result(["error" : "Invalid type", "errorType" : "NotFoundVerificationMethod"])
-                return
-            }
-            
-            VerifySpeed.shared.setClientKey(clientKey)
             do {
-                try VerifySpeed.shared.startVerification(
-                    callBackListener: listener,
-                    verifySpeedMethodType: type,
-                    redirectToStore: redirectToStore
+                try VerifySpeed.shared.verifyPhoneNumberWithDeepLink(
+                    deeplink: deeplink,
+                    verificationKey: verificationKey,
+                    redirectToStore: redirectToStore,
+                    callBackListener: listener
                 )
             } catch {
-                result(["error" : "Something went wrong", "errorType" : "Unknown"])
+                result(
+                    [
+                        "error" : "Error occur while verifying phone number with deep link : \(error)",
+                        "errorType" : "Unknown"
+                    ]
+                )
             }
             
-        case "startVerificationWithDeepLink":
-            let deepLink = arguments?["deepLink"] as! String
-            let verificationName = arguments?["verificationName"] as! String
+          case "verifyPhoneNumberWithOtp":
+            let phoneNumber = arguments?["phoneNumber"] as! String
             let verificationKey = arguments?["verificationKey"] as! String
 
-            do {
-                let listener = VerifySpeedListenerHandler(result: result)
-
-                try VerifySpeed.shared.startVerificationWithDeepLink(
-                    callBackListener: listener,
-                    deepLink: deepLink,
-                    verificationKey: verificationKey,
-                    methodName: verificationName,
-                    redirectToStore: redirectToStore
-                )
-            } catch {
-                result(FlutterError(code: "ERROR_OCCURRED", message: "Error occurred while startVerificationWithDeepLink", details: nil))
+            VerifySpeed.shared.verifyPhoneNumberWithOtp(
+                phoneNumber: phoneNumber,
+                verificationKey: verificationKey
+            ) { response in
+                switch response {
+                case .success:
+                    result(nil)
+                    break
+                    
+                case .failure(let error):
+                    result(["error" : error.message, "errorType" : error.type.name])
+                    break
+                }
             }
-            
             
         case "notifyOnResumed":
             VerifySpeed.shared.notifyOnResumed()
@@ -81,6 +76,7 @@ public class FlutterVerifyspeedPlugin: NSObject, FlutterPlugin {
             let listener = VerifySpeedListenerHandler(result: result)
 
             VerifySpeed.shared.checkInterruptedSession(callBackListener: listener)
+
         default:
             result(FlutterMethodNotImplemented)
         }
