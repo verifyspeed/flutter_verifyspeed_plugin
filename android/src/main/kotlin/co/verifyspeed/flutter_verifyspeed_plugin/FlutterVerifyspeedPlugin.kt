@@ -97,9 +97,9 @@ class FlutterVerifyspeedPlugin: FlutterPlugin, MethodCallHandler, ActivityAware{
 
             GlobalScope.launch {
               VerifySpeed.validateOTP(
-                callBackListener = getVerificationListener(result),
-                verificationKey = verificationKey,
                 otpCode = otpCode,
+                verificationKey = verificationKey,
+                callBackListener = getVerificationListener(result),
               )
             }
           },
