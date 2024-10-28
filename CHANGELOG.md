@@ -34,3 +34,8 @@
 
 - Breaking change: verify phone number process is changed
 - Improvement and bug fixes
+
+## 0.0.10
+
+- Fix bug while validate otp in ios
+- Improvement and bug fixes
