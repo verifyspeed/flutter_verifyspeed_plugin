@@ -61,6 +61,18 @@ public class FlutterVerifyspeedPlugin: NSObject, FlutterPlugin {
                 }
             }
             
+        case "validateOtp":
+            let otpCode = arguments?["otpCode"] as! String
+            let verificationKey = arguments?["verificationKey"] as! String
+            
+            let listener = VerifySpeedListenerHandler(result: result)
+
+            VerifySpeed.shared.validateOTP(
+                otpCode: otpCode,
+                verificationKey: verificationKey,
+                callBackListener: listener
+            )
+            
         case "notifyOnResumed":
             VerifySpeed.shared.notifyOnResumed()
             
