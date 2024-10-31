@@ -34,3 +34,7 @@
 
 - Breaking change: verify phone number process is changed
 - Improvement and bug fixes
+
+## 0.0.10
+
+- Update Documentation
