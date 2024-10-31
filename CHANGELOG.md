@@ -40,3 +40,8 @@
 - Update Documentation
 - Fix bug while validate otp in ios
 - Improvement and bug fixes
+
+## 0.0.11
+
+- Update Documentation
+
