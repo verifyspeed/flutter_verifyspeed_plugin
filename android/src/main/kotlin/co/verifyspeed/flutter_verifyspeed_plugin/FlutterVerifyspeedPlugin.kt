@@ -5,7 +5,6 @@ import co.verifyspeed.androidlibrary.VerifySpeed
 import co.verifyspeed.androidlibrary.VerifySpeedError
 import co.verifyspeed.androidlibrary.VerifySpeedErrorType
 import co.verifyspeed.androidlibrary.VerifySpeedListener
-import co.verifyspeed.androidlibrary.VerifySpeedMethodType
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -17,7 +16,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
 
-/** FlutterVerifyspeedPlugin */
+/** FlutterVerifySpeedPlugin */
 class FlutterVerifyspeedPlugin: FlutterPlugin, MethodCallHandler, ActivityAware{
   private lateinit var channel: MethodChannel
   private val activity get() = activityReference.get()
