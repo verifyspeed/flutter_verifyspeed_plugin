@@ -19,33 +19,24 @@ public class FlutterVerifyspeedPlugin: NSObject, FlutterPlugin {
         let arguments = call.arguments as? [String: Any]
         
         switch call.method {
-          case "verifyPhoneNumberWithDeepLink":
+        case "verifyPhoneNumberWithDeepLink":
             let deeplink = arguments?["deepLink"] as! String
             let verificationKey = arguments?["verificationKey"] as! String
             let redirectToStore = arguments?["redirectToStore"] as? Bool ?? true
-
-            let listener = VerifySpeedListenerHandler(result: result)
-
-            do {
-                try VerifySpeed.shared.verifyPhoneNumberWithDeepLink(
-                    deeplink: deeplink,
-                    verificationKey: verificationKey,
-                    redirectToStore: redirectToStore,
-                    callBackListener: listener
-                )
-            } catch {
-                result(
-                    [
-                        "error" : "Error occur while verifying phone number with deep link : \(error)",
-                        "errorType" : "Unknown"
-                    ]
-                )
-            }
             
-          case "verifyPhoneNumberWithOtp":
+            let listener = VerifySpeedListenerHandler(result: result)
+            
+            VerifySpeed.shared.verifyPhoneNumberWithDeepLink(
+                deeplink: deeplink,
+                verificationKey: verificationKey,
+                redirectToStore: redirectToStore,
+                callBackListener: listener
+            )
+            
+        case "verifyPhoneNumberWithOtp":
             let phoneNumber = arguments?["phoneNumber"] as! String
             let verificationKey = arguments?["verificationKey"] as! String
-
+            
             VerifySpeed.shared.verifyPhoneNumberWithOtp(
                 phoneNumber: phoneNumber,
                 verificationKey: verificationKey
@@ -66,7 +57,7 @@ public class FlutterVerifyspeedPlugin: NSObject, FlutterPlugin {
             let verificationKey = arguments?["verificationKey"] as! String
             
             let listener = VerifySpeedListenerHandler(result: result)
-
+            
             VerifySpeed.shared.validateOTP(
                 otpCode: otpCode,
                 verificationKey: verificationKey,
@@ -86,9 +77,9 @@ public class FlutterVerifyspeedPlugin: NSObject, FlutterPlugin {
             
         case "checkInterruptedSession":
             let listener = VerifySpeedListenerHandler(result: result)
-
+            
             VerifySpeed.shared.checkInterruptedSession(callBackListener: listener)
-
+            
         default:
             result(FlutterMethodNotImplemented)
         }
