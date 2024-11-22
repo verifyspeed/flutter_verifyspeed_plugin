@@ -45,3 +45,7 @@
 
 - Update Documentation
 
+## 0.0.12
+
+- Update Documentation
+- Improvement and bug fixes
