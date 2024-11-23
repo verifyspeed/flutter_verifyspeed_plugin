@@ -49,3 +49,7 @@
 
 - Update Documentation
 - Improvement and bug fixes
+
+## 0.0.13
+
+- Improvement and bug fixes

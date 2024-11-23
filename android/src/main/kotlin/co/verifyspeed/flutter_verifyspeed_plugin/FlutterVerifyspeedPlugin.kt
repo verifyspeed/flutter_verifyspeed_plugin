@@ -106,14 +106,14 @@ class FlutterVerifyspeedPlugin: FlutterPlugin, MethodCallHandler, ActivityAware{
         )
       }
 
-      "getUiFromApi" -> {
+      "initialize" -> {
         handleException({
           val clientKey = arguments!!["clientKey"] as String
 
           VerifySpeed.setClientKey(clientKey)
 
           GlobalScope.launch {
-            val response = VerifySpeed.getUiFromApi()
+            val response = VerifySpeed.initialize()
 
             result.success(response)
           }

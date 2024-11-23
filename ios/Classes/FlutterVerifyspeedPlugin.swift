@@ -67,11 +67,12 @@ public class FlutterVerifyspeedPlugin: NSObject, FlutterPlugin {
         case "notifyOnResumed":
             VerifySpeed.shared.notifyOnResumed()
             
-        case "getUiFromApi":
+        case "initialize":
             let clientKey = arguments?["clientKey"] as! String
             
             VerifySpeed.shared.setClientKey(clientKey)
-            VerifySpeed.shared.getUIFromAPI(){ data in
+
+            VerifySpeed.shared.initialize(){ data in
                 result(data)
             }
             

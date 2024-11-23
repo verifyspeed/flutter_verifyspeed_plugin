@@ -9,17 +9,20 @@ final class VerifySpeedPlugin {
 
   late void Function(String token) onSuccess;
   late void Function(VerifySpeedError error) onFailure;
+  String? clientKey;
 
-  Future<String?> getUiFromApi(String clientKey) async {
-    if (clientKey.isEmpty) {
-      throw VerifySpeedError(
+  void setClientKey(String clientKey) => this.clientKey = clientKey;
+
+  Future<String?> initialize() async {
+    if (clientKey == null || clientKey!.isEmpty) {
+      throw const VerifySpeedError(
         'Client key is empty',
         VerifySpeedErrorType.clientKeyNotSet,
       );
     }
 
     final result = await channel.invokeMethod(
-      'getUiFromApi',
+      'initialize',
       {'clientKey': clientKey},
     );
 
