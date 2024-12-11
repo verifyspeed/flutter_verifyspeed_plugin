@@ -62,7 +62,7 @@ class LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () async {},
               child: const Text('Start Verification With Telegram'),
             ),
             ElevatedButton(

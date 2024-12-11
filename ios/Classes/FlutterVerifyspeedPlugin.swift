@@ -72,14 +72,23 @@ public class FlutterVerifyspeedPlugin: NSObject, FlutterPlugin {
             
             VerifySpeed.shared.setClientKey(clientKey)
 
-            VerifySpeed.shared.initialize(){ data in
-                result(data)
+            do {
+                try VerifySpeed.shared.initialize(){ data in
+                    result(data)
+                }
+            } catch {
+                print(error)
             }
             
         case "checkInterruptedSession":
             let listener = VerifySpeedListenerHandler(result: result)
             
             VerifySpeed.shared.checkInterruptedSession(callBackListener: listener)
+            
+        case "clearCachedSession":
+            let listener = VerifySpeedListenerHandler(result: result)
+            
+            VerifySpeed.shared.clearCachedSession()
             
         default:
             result(FlutterMethodNotImplemented)

@@ -31,7 +31,7 @@ class FlutterVerifyspeedPlugin: FlutterPlugin, MethodCallHandler, ActivityAware{
   override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
     val arguments = call.arguments as HashMap<*, *>?
     if (activity == null) {
-      result.success(mapOf("error" to "Activity not found", "errorType" to VerifySpeedErrorType .ActivityNotSet))
+      result.success(mapOf("error" to "Activity not found", "errorType" to VerifySpeedErrorType.ActivityNotSet))
 
       return
     }
@@ -43,7 +43,7 @@ class FlutterVerifyspeedPlugin: FlutterPlugin, MethodCallHandler, ActivityAware{
           val verificationKey = arguments["verificationKey"] as String
           val redirectToStore = arguments["redirectToStore"] as? Boolean ?: true
 
-          VerifySpeed.init(activity!!)
+          VerifySpeed.setActivity(activity!!)
 
           VerifySpeed.verifyPhoneNumberWithDeepLink(
             deeplink = deepLink,
@@ -92,7 +92,7 @@ class FlutterVerifyspeedPlugin: FlutterPlugin, MethodCallHandler, ActivityAware{
             val verificationKey: String = arguments!!["verificationKey"] as String
             val otpCode: String = arguments["otpCode"] as String
 
-            VerifySpeed.init(activity!!)
+            VerifySpeed.setActivity(activity!!)
 
             GlobalScope.launch {
               VerifySpeed.validateOTP(
@@ -123,12 +123,20 @@ class FlutterVerifyspeedPlugin: FlutterPlugin, MethodCallHandler, ActivityAware{
       "checkInterruptedSession" -> {
         handleException({
           GlobalScope.launch {
-            VerifySpeed.init(activity!!)
+            VerifySpeed.setActivity(activity!!)
 
             VerifySpeed.checkInterruptedSession(
               callBackListener = getVerificationListener(result),
             )
           }
+        }, result)
+      }
+
+      "clearCachedSession" -> {
+        handleException({
+          VerifySpeed.setActivity(activity!!)
+
+          VerifySpeed.clearCachedSession()
         }, result)
       }
     }

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/services.dart';
 import 'package:flutter_verifyspeed_plugin/flutter_verifyspeed_plugin.dart';
 
@@ -107,18 +109,23 @@ final class VerifySpeedPlugin {
 
   Future<void> checkInterruptedSession({
     required void Function(String token) onSuccess,
-    required void Function(VerifySpeedError error) onFailure,
   }) async {
     this.onSuccess = onSuccess;
-    this.onFailure = onFailure;
 
     final result = await channel.invokeMethod('checkInterruptedSession');
 
     _checkResult(
       result: result,
-      onFailure: onFailure,
       onSuccess: onSuccess,
     );
+  }
+
+  Future<void> clearCachedSession() async {
+    try {
+      await channel.invokeMethod('clearCachedSession');
+    } catch (error) {
+      log('Error clearing cached session: $error');
+    }
   }
 
   void _checkResult({
