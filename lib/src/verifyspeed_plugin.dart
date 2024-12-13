@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/services.dart';
 import 'package:flutter_verifyspeed_plugin/flutter_verifyspeed_plugin.dart';
 
@@ -118,14 +116,6 @@ final class VerifySpeedPlugin {
       result: result,
       onSuccess: onSuccess,
     );
-  }
-
-  Future<void> clearCachedSession() async {
-    try {
-      await channel.invokeMethod('clearCachedSession');
-    } catch (error) {
-      log('Error clearing cached session: $error');
-    }
   }
 
   void _checkResult({

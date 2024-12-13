@@ -81,14 +81,13 @@ public class FlutterVerifyspeedPlugin: NSObject, FlutterPlugin {
             }
             
         case "checkInterruptedSession":
-            let listener = VerifySpeedListenerHandler(result: result)
-            
-            VerifySpeed.shared.checkInterruptedSession(callBackListener: listener)
-            
-        case "clearCachedSession":
-            let listener = VerifySpeedListenerHandler(result: result)
-            
-            VerifySpeed.shared.clearCachedSession()
+            VerifySpeed.shared.checkInterruptedSession() { token in
+                if let token = token {
+                    result(["token": token])
+                } else {
+                    result(nil)
+                }
+            }
             
         default:
             result(FlutterMethodNotImplemented)

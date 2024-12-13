@@ -1,6 +1,7 @@
 package co.verifyspeed.flutter_verifyspeed_plugin
 
 import android.app.Activity
+import android.util.Log
 import co.verifyspeed.androidlibrary.VerifySpeed
 import co.verifyspeed.androidlibrary.VerifySpeedError
 import co.verifyspeed.androidlibrary.VerifySpeedErrorType
@@ -125,18 +126,14 @@ class FlutterVerifyspeedPlugin: FlutterPlugin, MethodCallHandler, ActivityAware{
           GlobalScope.launch {
             VerifySpeed.setActivity(activity!!)
 
-            VerifySpeed.checkInterruptedSession(
-              callBackListener = getVerificationListener(result),
-            )
+            VerifySpeed.checkInterruptedSession { token ->
+              if (token != null) {
+                result.success(mapOf("token" to token))
+              } else {
+                result.success(null)
+              }
+            }
           }
-        }, result)
-      }
-
-      "clearCachedSession" -> {
-        handleException({
-          VerifySpeed.setActivity(activity!!)
-
-          VerifySpeed.clearCachedSession()
         }, result)
       }
     }
@@ -158,8 +155,10 @@ class FlutterVerifyspeedPlugin: FlutterPlugin, MethodCallHandler, ActivityAware{
     try {
       func()
     } catch (e: VerifySpeedError) {
+      Log.e("Error VS", "Error ${e.message} ${e.type}")
       result.success(mapOf("error" to e.message, "errorType" to e.type.name))
     } catch (e: Exception) {
+      Log.e("Error VS", "Error ${e.message}")
       result.success(mapOf("error" to e.message, "errorType" to "Unknown"))
     }
   }

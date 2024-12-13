@@ -66,7 +66,7 @@ class LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
               child: const Text('Start Verification With Telegram'),
             ),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () async {},
               child: const Text('Start Verification With WhatsApp'),
             ),
           ],
