@@ -32,12 +32,32 @@ class FlutterVerifyspeedPlugin: FlutterPlugin, MethodCallHandler, ActivityAware{
   override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
     val arguments = call.arguments as HashMap<*, *>?
     if (activity == null) {
-      result.success(mapOf("error" to "Activity not found", "errorType" to VerifySpeedErrorType.ActivityNotSet))
+      result.success(mapOf("error" to "Activity not found", "errorType" to VerifySpeedErrorType .ActivityNotSet))
 
       return
     }
 
     when (call.method) {
+      "initialize" -> {
+        handleException({
+          val clientKey = arguments!!["clientKey"] as String
+
+          VerifySpeed.setClientKey(clientKey)
+
+          val methods = VerifySpeed.initialize()
+          val methodsJson = """
+              {
+                "availableMethods": ${methods.map { method ->
+            """{"methodName":"${method.methodName}","displayName":"${method.displayName}"}"""
+          }}
+              }
+            """.trimIndent()
+
+          result.success(methodsJson)
+        }, result)
+      }
+
+
       "verifyPhoneNumberWithDeepLink" -> {
         handleException({
           val deepLink = arguments!!["deepLink"] as String
@@ -58,33 +78,16 @@ class FlutterVerifyspeedPlugin: FlutterPlugin, MethodCallHandler, ActivityAware{
       }
 
       "verifyPhoneNumberWithOtp" -> {
-        handleException(
-          {
-            val verificationKey = arguments!!["verificationKey"] as String
-            val phoneNumber = arguments["phoneNumber"] as String
+        handleException({
+          val verificationKey = arguments!!["verificationKey"] as String
+          val phoneNumber = arguments["phoneNumber"] as String
 
-            GlobalScope.launch {
-              VerifySpeed.verifyPhoneNumberWithOtp(
-                phoneNumber = phoneNumber,
-                verificationKey = verificationKey,
-              )
-
-              result.success(null)
-            }
-          },
-          result
-        )
-      }
-
-      "notifyOnResumed" -> {
-        handleException(
-          {
-            GlobalScope.launch {
-              VerifySpeed.notifyOnResumed()
-            }
-          },
-          result
-        )
+          VerifySpeed.verifyPhoneNumberWithOtp(
+            phoneNumber = phoneNumber,
+            verificationKey = verificationKey,
+          )
+          result.success(null)
+        }, result)
       }
 
       "validateOtp" -> {
@@ -95,45 +98,32 @@ class FlutterVerifyspeedPlugin: FlutterPlugin, MethodCallHandler, ActivityAware{
 
             VerifySpeed.setActivity(activity!!)
 
-            GlobalScope.launch {
-              VerifySpeed.validateOTP(
-                otpCode = otpCode,
-                verificationKey = verificationKey,
-                callBackListener = getVerificationListener(result),
-              )
-            }
+            VerifySpeed.validateOTP(
+              otpCode = otpCode,
+              verificationKey = verificationKey,
+              callBackListener = getVerificationListener(result),
+            )
           },
           result,
         )
       }
 
-      "initialize" -> {
-        handleException({
-          val clientKey = arguments!!["clientKey"] as String
-
-          VerifySpeed.setClientKey(clientKey)
-
-          GlobalScope.launch {
-            val response = VerifySpeed.initialize()
-
-            result.success(response)
-          }
-        }, result)
+      "notifyOnResumed" -> {
+        handleException(
+          { VerifySpeed.notifyOnResumed() },
+          result
+        )
       }
 
       "checkInterruptedSession" -> {
         handleException({
-          GlobalScope.launch {
-            VerifySpeed.setActivity(activity!!)
+          VerifySpeed.setActivity(activity!!)
 
-            VerifySpeed.checkInterruptedSession { token ->
-              if (token != null) {
-                result.success(mapOf("token" to token))
-              } else {
-                result.success(null)
-              }
+          VerifySpeed.checkInterruptedSession(
+            onSuccess =  { token ->
+              result.success(mapOf("token" to token))
             }
-          }
+          )
         }, result)
       }
     }
@@ -151,15 +141,16 @@ class FlutterVerifyspeedPlugin: FlutterPlugin, MethodCallHandler, ActivityAware{
     }
   }
 
-  private fun handleException(func: () -> Unit, result: MethodChannel.Result) {
-    try {
-      func()
-    } catch (e: VerifySpeedError) {
-      Log.e("Error VS", "Error ${e.message} ${e.type}")
-      result.success(mapOf("error" to e.message, "errorType" to e.type.name))
-    } catch (e: Exception) {
-      Log.e("Error VS", "Error ${e.message}")
-      result.success(mapOf("error" to e.message, "errorType" to "Unknown"))
+  @OptIn(DelicateCoroutinesApi::class)
+  private fun handleException(func: suspend () -> Unit, result: MethodChannel.Result) {
+    GlobalScope.launch {
+      try {
+        func()
+      } catch (e: VerifySpeedError) {
+        result.success(mapOf("error" to e.message, "errorType" to e.type.name))
+      } catch (e: Exception) {
+        result.success(mapOf("error" to e.message, "errorType" to "Unknown"))
+      }
     }
   }
 

@@ -7,8 +7,6 @@ final class VerifySpeedPlugin {
   static final instance = VerifySpeedPlugin._();
   final channel = const MethodChannel('verifyspeed_channel');
 
-  late void Function(String token) onSuccess;
-  late void Function(VerifySpeedError error) onFailure;
   String? clientKey;
 
   void setClientKey(String clientKey) => this.clientKey = clientKey;
@@ -36,9 +34,6 @@ final class VerifySpeedPlugin {
     required void Function(String token) onSuccess,
     required void Function(VerifySpeedError error) onFailure,
   }) async {
-    this.onSuccess = onSuccess;
-    this.onFailure = onFailure;
-
     final result = await channel.invokeMethod(
       'verifyPhoneNumberWithDeepLink',
       {
@@ -87,9 +82,6 @@ final class VerifySpeedPlugin {
     required void Function(String token) onSuccess,
     required void Function(VerifySpeedError error) onFailure,
   }) async {
-    this.onSuccess = onSuccess;
-    this.onFailure = onFailure;
-
     final result = await channel.invokeMethod(
       'validateOtp',
       {
@@ -108,8 +100,6 @@ final class VerifySpeedPlugin {
   Future<void> checkInterruptedSession({
     required void Function(String token) onSuccess,
   }) async {
-    this.onSuccess = onSuccess;
-
     final result = await channel.invokeMethod('checkInterruptedSession');
 
     _checkResult(
@@ -129,36 +119,30 @@ final class VerifySpeedPlugin {
         final error = result['error'];
         final errorType =
             VerifySpeedErrorType.fromString(result['errorType'] as String?);
+        final verifySpeedError = VerifySpeedError(error.toString(), errorType);
 
         if (token is String? && token != null && token.isNotEmpty) {
-          this.onSuccess(token);
+          onSuccess?.call(token);
 
           return;
-        } else if (error != null) {
-          this.onFailure(
-            VerifySpeedError(
-              error.toString(),
-              errorType,
-            ),
-          );
+        } else if (error != null && onFailure != null) {
+          onFailure.call(verifySpeedError);
 
           return;
+        } else {
+          throw verifySpeedError;
         }
-
-        onFailure?.call(
-          VerifySpeedError(
-            'Token is null',
-            errorType,
-          ),
-        );
       }
     } catch (error) {
-      onFailure?.call(
-        VerifySpeedError(
-          error.toString(),
-          VerifySpeedErrorType.unknown,
-        ),
-      );
+      if (onFailure != null) {
+        onFailure.call(
+          VerifySpeedError(error.toString(), VerifySpeedErrorType.unknown),
+        );
+
+        return;
+      }
+
+      rethrow;
     }
   }
 }

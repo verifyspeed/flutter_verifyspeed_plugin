@@ -69,3 +69,7 @@
 ## 0.0.17
 
 - Update Dependencies
+
+## 0.0.18
+
+- Improvement and bug fixes
