@@ -73,3 +73,7 @@
 ## 0.0.18
 
 - Improvement and bug fixes
+
+## 0.0.19
+
+- Improvement and bug fixes

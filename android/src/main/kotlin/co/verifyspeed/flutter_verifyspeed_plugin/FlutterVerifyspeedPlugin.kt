@@ -28,7 +28,6 @@ class FlutterVerifyspeedPlugin: FlutterPlugin, MethodCallHandler, ActivityAware{
     channel.setMethodCallHandler(this)
   }
 
-  @OptIn(DelicateCoroutinesApi::class)
   override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
     val arguments = call.arguments as HashMap<*, *>?
     if (activity == null) {

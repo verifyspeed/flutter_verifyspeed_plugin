@@ -24,6 +24,15 @@ final class VerifySpeedPlugin {
       {'clientKey': clientKey},
     );
 
+    if (result is Map) {
+      final error = result['error'];
+      final errorType = VerifySpeedErrorType.fromString(
+        result['errorType'] as String?,
+      );
+
+      throw VerifySpeedError(error.toString(), errorType);
+    }
+
     return result;
   }
 
@@ -136,7 +145,10 @@ final class VerifySpeedPlugin {
     } catch (error) {
       if (onFailure != null) {
         onFailure.call(
-          VerifySpeedError(error.toString(), VerifySpeedErrorType.unknown),
+          VerifySpeedError(
+            error.toString(),
+            VerifySpeedErrorType.unknown,
+          ),
         );
 
         return;

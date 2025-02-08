@@ -19,6 +19,34 @@ public class FlutterVerifyspeedPlugin: NSObject, FlutterPlugin {
         let arguments = call.arguments as? [String: Any]
         
         switch call.method {
+
+        case "initialize":
+            let clientKey = arguments?["clientKey"] as! String
+            
+            VerifySpeed.shared.setClientKey(clientKey)
+            do {
+                try VerifySpeed.shared.initialize() { methods in
+                    let methodsArray = methods.map { method in
+                        """
+                        {"methodName":"\(method.methodName)",
+                        "displayName":"\(method.displayName)"}
+                        """
+                    }.joined(separator: ",")
+                    
+                    let methodsJson = """
+                    {
+                        "availableMethods": [\(methodsArray)]
+                    }
+                    """
+                    
+                    result(methodsJson)
+                }
+            } catch let error as VerifySpeedError {
+                result(["error" : error.message, "errorType" : error.type.name])
+            } catch {
+                result(["error" : error.localizedDescription, "errorType" : VerifySpeedErrorType.unknown.name])
+            }
+
         case "verifyPhoneNumberWithDeepLink":
             let deeplink = arguments?["deepLink"] as! String
             let verificationKey = arguments?["verificationKey"] as! String
@@ -66,19 +94,6 @@ public class FlutterVerifyspeedPlugin: NSObject, FlutterPlugin {
             
         case "notifyOnResumed":
             VerifySpeed.shared.notifyOnResumed()
-            
-        case "initialize":
-            let clientKey = arguments?["clientKey"] as! String
-            
-            VerifySpeed.shared.setClientKey(clientKey)
-
-            do {
-                try VerifySpeed.shared.initialize(){ data in
-                    result(data)
-                }
-            } catch {
-                print(error)
-            }
             
         case "checkInterruptedSession":
             VerifySpeed.shared.checkInterruptedSession() { token in
