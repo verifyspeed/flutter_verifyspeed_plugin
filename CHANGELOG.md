@@ -77,3 +77,9 @@
 ## 0.0.19
 
 - Improvement and bug fixes
+
+## 0.0.20
+
+- Improvement and bug fixes
+- Update dependencies
+- Change minSdk version to 24
