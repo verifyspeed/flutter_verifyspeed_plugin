@@ -1,11 +1,10 @@
 package co.verifyspeed.flutter_verifyspeed_plugin
 
 import android.app.Activity
-import android.util.Log
-import co.verifyspeed.androidlibrary.VerifySpeed
-import co.verifyspeed.androidlibrary.VerifySpeedError
-import co.verifyspeed.androidlibrary.VerifySpeedErrorType
-import co.verifyspeed.androidlibrary.VerifySpeedListener
+import co.verifyspeed.android.VerifySpeed
+import co.verifyspeed.android.VerifySpeedError
+import co.verifyspeed.android.VerifySpeedErrorType
+import co.verifyspeed.android.VerifySpeedListener
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -25,6 +24,7 @@ class FlutterVerifyspeedPlugin: FlutterPlugin, MethodCallHandler, ActivityAware{
 
   override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     channel = MethodChannel(flutterPluginBinding.binaryMessenger, "verifyspeed_channel")
+
     channel.setMethodCallHandler(this)
   }
 
@@ -43,7 +43,8 @@ class FlutterVerifyspeedPlugin: FlutterPlugin, MethodCallHandler, ActivityAware{
 
           VerifySpeed.setClientKey(clientKey)
 
-          val methods = VerifySpeed.initialize()
+          val methods = VerifySpeed.initialize().get()
+
           val methodsJson = """
               {
                 "availableMethods": ${methods.map { method ->
@@ -66,10 +67,10 @@ class FlutterVerifyspeedPlugin: FlutterPlugin, MethodCallHandler, ActivityAware{
           VerifySpeed.setActivity(activity!!)
 
           VerifySpeed.verifyPhoneNumberWithDeepLink(
-            deeplink = deepLink,
-            verificationKey = verificationKey,
-            redirectToStore = redirectToStore,
-            callBackListener = getVerificationListener(result),
+            deepLink,
+            verificationKey,
+            redirectToStore,
+            getVerificationListener(result),
           )
         },
           result
@@ -82,8 +83,8 @@ class FlutterVerifyspeedPlugin: FlutterPlugin, MethodCallHandler, ActivityAware{
           val phoneNumber = arguments["phoneNumber"] as String
 
           VerifySpeed.verifyPhoneNumberWithOtp(
-            phoneNumber = phoneNumber,
-            verificationKey = verificationKey,
+            phoneNumber,
+            verificationKey,
           )
           result.success(null)
         }, result)
@@ -98,9 +99,9 @@ class FlutterVerifyspeedPlugin: FlutterPlugin, MethodCallHandler, ActivityAware{
             VerifySpeed.setActivity(activity!!)
 
             VerifySpeed.validateOTP(
-              otpCode = otpCode,
-              verificationKey = verificationKey,
-              callBackListener = getVerificationListener(result),
+              otpCode,
+              verificationKey,
+              getVerificationListener(result),
             )
           },
           result,
@@ -118,11 +119,9 @@ class FlutterVerifyspeedPlugin: FlutterPlugin, MethodCallHandler, ActivityAware{
         handleException({
           VerifySpeed.setActivity(activity!!)
 
-          VerifySpeed.checkInterruptedSession(
-            onSuccess =  { token ->
-              result.success(mapOf("token" to token))
-            }
-          )
+          VerifySpeed.checkInterruptedSession { token ->
+            result.success(mapOf("token" to token))
+          }
         }, result)
       }
     }
