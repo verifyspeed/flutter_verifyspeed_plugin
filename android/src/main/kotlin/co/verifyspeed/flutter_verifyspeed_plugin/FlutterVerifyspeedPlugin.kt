@@ -11,10 +11,15 @@ import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.future.await
 import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
+import kotlin.coroutines.CoroutineContext
 
 /** FlutterVerifySpeedPlugin */
 class FlutterVerifyspeedPlugin: FlutterPlugin, MethodCallHandler, ActivityAware{
@@ -43,7 +48,7 @@ class FlutterVerifyspeedPlugin: FlutterPlugin, MethodCallHandler, ActivityAware{
 
           VerifySpeed.setClientKey(clientKey)
 
-          val methods = VerifySpeed.initialize().get()
+          val methods = VerifySpeed.initialize().await()
 
           val methodsJson = """
               {
@@ -85,7 +90,8 @@ class FlutterVerifyspeedPlugin: FlutterPlugin, MethodCallHandler, ActivityAware{
           VerifySpeed.verifyPhoneNumberWithOtp(
             phoneNumber,
             verificationKey,
-          )
+          ).await()
+
           result.success(null)
         }, result)
       }
@@ -102,7 +108,7 @@ class FlutterVerifyspeedPlugin: FlutterPlugin, MethodCallHandler, ActivityAware{
               otpCode,
               verificationKey,
               getVerificationListener(result),
-            )
+            ).await()
           },
           result,
         )
@@ -121,7 +127,7 @@ class FlutterVerifyspeedPlugin: FlutterPlugin, MethodCallHandler, ActivityAware{
 
           VerifySpeed.checkInterruptedSession { token ->
             result.success(mapOf("token" to token))
-          }
+          }.await()
         }, result)
       }
     }
@@ -139,9 +145,8 @@ class FlutterVerifyspeedPlugin: FlutterPlugin, MethodCallHandler, ActivityAware{
     }
   }
 
-  @OptIn(DelicateCoroutinesApi::class)
   private fun handleException(func: suspend () -> Unit, result: MethodChannel.Result) {
-    GlobalScope.launch {
+    CoroutineScope(Dispatchers.Main).launch {
       try {
         func()
       } catch (e: VerifySpeedError) {
