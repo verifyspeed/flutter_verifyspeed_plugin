@@ -83,3 +83,10 @@
 - Improvement and bug fixes
 - Update dependencies
 - Change minSdk version to 24
+
+## 0.0.21
+
+- Improvement and bug fixes
+- Update dependencies
+- Update compileSdkVersion to 35
+
