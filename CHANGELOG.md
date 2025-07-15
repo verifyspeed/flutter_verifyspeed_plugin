@@ -90,3 +90,8 @@
 - Update dependencies
 - Update compileSdkVersion to 35
 
+## 0.0.22
+
+- Add Dynamic OTP
+- Improvement and bug fixes
+

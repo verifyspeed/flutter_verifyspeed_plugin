@@ -59,19 +59,78 @@ final class VerifySpeedPlugin {
     );
   }
 
-  Future<void> verifyPhoneNumberWithOtp({
+  Future<Map<String, dynamic>?> verifyPhoneNumberWithOtp({
     required String phoneNumber,
     required String verificationKey,
   }) async {
-    final result = await channel.invokeMethod(
-      'verifyPhoneNumberWithOtp',
-      {
-        'phoneNumber': phoneNumber,
-        'verificationKey': verificationKey,
-      },
-    );
+    try {
+      final result = await channel.invokeMethod(
+        'verifyPhoneNumberWithOtp',
+        {
+          'phoneNumber': phoneNumber,
+          'verificationKey': verificationKey,
+        },
+      );
 
-    _checkResult(result: result);
+      if (result is Map<String, dynamic>) {
+        final error = result['error'];
+        final errorType = VerifySpeedErrorType.fromString(
+          result['errorType'] as String?,
+        );
+
+        if (error != null) {
+          throw VerifySpeedError(error.toString(), errorType);
+        }
+
+        return result;
+      }
+
+      throw VerifySpeedError(
+        'Invalid result',
+        VerifySpeedErrorType.unknown,
+      );
+    } catch (error) {
+      throw VerifySpeedError(
+        error.toString(),
+        VerifySpeedErrorType.unknown,
+      );
+    }
+  }
+
+  Future<Map<String, dynamic>?> sendNextDynamicOtp({
+    required String verificationKey,
+  }) async {
+    try {
+      final result = await channel.invokeMethod(
+        'sendNextDynamicOtp',
+        {
+          'verificationKey': verificationKey,
+        },
+      );
+
+      if (result is Map<String, dynamic>) {
+        final error = result['error'];
+        final errorType = VerifySpeedErrorType.fromString(
+          result['errorType'] as String?,
+        );
+
+        if (error != null) {
+          throw VerifySpeedError(error.toString(), errorType);
+        }
+
+        return result;
+      }
+
+      throw VerifySpeedError(
+        'Invalid result',
+        VerifySpeedErrorType.unknown,
+      );
+    } catch (error) {
+      throw VerifySpeedError(
+        error.toString(),
+        VerifySpeedErrorType.unknown,
+      );
+    }
   }
 
   Future<void> notifyOnResumed() async {
@@ -138,7 +197,7 @@ final class VerifySpeedPlugin {
           onFailure.call(verifySpeedError);
 
           return;
-        } else {
+        } else if (error != null && onFailure == null) {
           throw verifySpeedError;
         }
       }

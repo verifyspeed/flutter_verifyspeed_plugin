@@ -70,8 +70,35 @@ public class FlutterVerifyspeedPlugin: NSObject, FlutterPlugin {
                 verificationKey: verificationKey
             ) { response in
                 switch response {
-                case .success:
-                    result(nil)
+                case .success(let otpResponse):
+                    result([
+                        "verificationKey": otpResponse.verificationKey,
+                        "sentByMethodName": otpResponse.sentByMethodName,
+                        "sentByMethodDisplay": otpResponse.sentByMethodDisplay,
+                        "nextSendAvailableAt": otpResponse.nextSendAvailableAt
+                    ])
+                    break
+                    
+                case .failure(let error):
+                    result(["error" : error.message, "errorType" : error.type.name])
+                    break
+                }
+            }
+            
+        case "sendNextDynamicOtp":
+            let verificationKey = arguments?["verificationKey"] as! String
+            
+            VerifySpeed.shared.sendNextDynamicOtp(
+                verificationKey: verificationKey
+            ) { response in
+                switch response {
+                case .success(let otpResponse):
+                    result([
+                        "verificationKey": otpResponse.verificationKey,
+                        "sentByMethodName": otpResponse.sentByMethodName,
+                        "sentByMethodDisplay": otpResponse.sentByMethodDisplay,
+                        "nextSendAvailableAt": otpResponse.nextSendAvailableAt
+                    ])
                     break
                     
                 case .failure(let error):
