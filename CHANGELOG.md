@@ -104,3 +104,7 @@
 
 - BREAK CHANGES: Dyanmic OTP Removed
 - Improvement and bug fixes
+
+## 0.0.25
+
+- Update README file
