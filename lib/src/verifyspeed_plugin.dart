@@ -59,7 +59,7 @@ final class VerifySpeedPlugin {
     );
   }
 
-  Future<Map<String, dynamic>> verifyPhoneNumberWithOtp({
+  Future<void> verifyPhoneNumberWithOtp({
     required String phoneNumber,
     required String verificationKey,
   }) async {
@@ -83,44 +83,8 @@ final class VerifySpeedPlugin {
         throw VerifySpeedError(error.toString(), errorType);
       }
 
-      return data;
+      return;
     }
-
-    throw const VerifySpeedError(
-      'Invalid result',
-      VerifySpeedErrorType.unknown,
-    );
-  }
-
-  Future<Map<String, dynamic>> sendNextDynamicOtp({
-    required String verificationKey,
-  }) async {
-    final result = await channel.invokeMethod(
-      'sendNextDynamicOtp',
-      {
-        'verificationKey': verificationKey,
-      },
-    );
-
-    if (result is Map) {
-      final data = Map<String, dynamic>.from(result);
-
-      final error = data['error'];
-      final errorType = VerifySpeedErrorType.fromString(
-        data['errorType'] as String?,
-      );
-
-      if (error != null) {
-        throw VerifySpeedError(error.toString(), errorType);
-      }
-
-      return data;
-    }
-
-    throw const VerifySpeedError(
-      'Invalid result',
-      VerifySpeedErrorType.unknown,
-    );
   }
 
   Future<void> notifyOnResumed() async {

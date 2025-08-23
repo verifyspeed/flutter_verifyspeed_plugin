@@ -99,3 +99,8 @@
 
 - Improvement and bug fixes
 
+
+## 0.0.24
+
+- BREAK CHANGES: Dyanmic OTP Removed
+- Improvement and bug fixes

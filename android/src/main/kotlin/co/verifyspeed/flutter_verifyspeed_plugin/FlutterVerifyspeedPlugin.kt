@@ -91,40 +91,13 @@ class FlutterVerifyspeedPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
                     val verificationKey = arguments!!["verificationKey"] as String
                     val phoneNumber = arguments["phoneNumber"] as String
 
-                    val response = VerifySpeed.verifyPhoneNumberWithOtp(
+                    VerifySpeed.verifyPhoneNumberWithOtp(
                         phoneNumber,
                         verificationKey,
                     ).await()
 
-                    result.success(
-                        mapOf(
-                            "verificationKey" to response.verificationKey,
-                            "sentByMethodName" to response.sentByMethodName,
-                            "sentByMethodDisplay" to response.sentByMethodDisplay,
-                            "nextSendAvailableAt" to response.nextSendAvailableAt,
-                        )
-                    )
+                    result.success(null)
                 }, result)
-            }
-
-            "sendNextDynamicOtp" -> {
-                handleException(
-                    {
-                        val verificationKey = arguments!!["verificationKey"] as String
-
-                        val response = VerifySpeed.sendNextDynamicOtp(verificationKey).await()
-
-                        result.success(
-                            mapOf(
-                                "verificationKey" to response.verificationKey,
-                                "sentByMethodName" to response.sentByMethodName,
-                                "sentByMethodDisplay" to response.sentByMethodDisplay,
-                                "nextSendAvailableAt" to response.nextSendAvailableAt,
-                            )
-                        )
-                    },
-                    result
-                )
             }
 
             "validateOtp" -> {
