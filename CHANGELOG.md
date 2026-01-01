@@ -108,3 +108,7 @@
 ## 0.0.25
 
 - Update README file
+
+## 0.0.26
+
+- Update Dependencies
